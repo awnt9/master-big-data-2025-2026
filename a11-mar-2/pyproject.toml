@@ -1,0 +1,12 @@
+[project]
+name = "a11-mar-2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.135.1",
+    "minio>=7.2.20",
+    "panda>=0.3.1",
+    "pymongo>=4.16.0",
+]
