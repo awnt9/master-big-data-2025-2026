@@ -1,4 +1,21 @@
 services:
+  worker:
+    build: .
+    command: ["uv", "run", "python", "-m", "app.worker"]
+    env_file:
+      - .env
+    environment:
+      MONGO_URI: mongodb://sensorhub:${MONGO_PASSWORD}@mongo:27017/sensorhub?authSource=sensorhub
+      MONGO_DB: sensorhub
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+    depends_on:
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - sensorhub-net
+
   mongo:
     image: mongo:7
     ports:
@@ -7,7 +24,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: sensorhub
-      MONGO_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_PASSWORD: ${MONGO_PASSWORD}
     volumes:
       - mongo_data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
@@ -21,7 +38,7 @@ services:
       start_period: 10s
 
   minio:
-    image: minio/minio
+    image: minio/minio:latest
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -33,6 +50,20 @@ services:
     command: server /data --console-address ":9001"
     networks:
       - sensorhub-net
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - sensorhub-net
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
 volumes:
   mongo_data:
