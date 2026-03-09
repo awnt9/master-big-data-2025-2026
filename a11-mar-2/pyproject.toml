@@ -8,5 +8,7 @@ dependencies = [
     "fastapi>=0.135.1",
     "minio>=7.2.20",
     "panda>=0.3.1",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.13.1",
     "pymongo>=4.16.0",
 ]
