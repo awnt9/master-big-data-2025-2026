@@ -1,5 +1,5 @@
-from app.config import Settings
+from app.api import app
+import uvicorn
 
-settings = Settings()
-
-print(settings.minio_access_key)
+if __name__ == "__main__":
+    uvicorn.run(app, host="localhost", port=8000)
