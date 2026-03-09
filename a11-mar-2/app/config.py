@@ -6,7 +6,7 @@ class Settings(BaseSettings):
 
     minio_access_key: str
     minio_secret_key: str
-    minio_port: int 
+    minio_port: int
     minio_ip: str
     minio_bucket: str
 
